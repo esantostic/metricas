@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificación Formal de la Investigación</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Warm Neutral, Muted Cyan, Amber, Violet Accents) -->
+    <!-- Application Structure Plan: A single-page informational layout using a three-column card design to present the main pillars of the research methodology (Enfoque, Tipo, Nivel). Each card details the definition and justification points. The structure concludes with a summary table. This design is chosen for clarity, scannability, and a modern aesthetic over a plain text document. -->
+    <!-- Visualization & Content Choices: The source is textual, so no charts are used. Information is organized into structured HTML cards (Goal: Organize/Inform) styled with Tailwind CSS. Key points are presented in lists with icons for better readability. The summary table (Goal: Inform) is a styled HTML table. No JS interactions are needed, focusing on a clean, static-but-stylish presentation. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #334155;
+        }
+        .method-card {
+             background-color: white;
+             border-radius: 0.75rem;
+             padding: 1.5rem;
+             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+             border-top: 4px solid;
+             height: 100%;
+             transition: all 0.3s ease-in-out;
+        }
+        .method-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-10 shadow-sm">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+             <h1 class="text-xl md:text-2xl font-bold text-slate-800">Clasificación Metodológica</h1>
+            <a href="index.html" class="text-sm bg-blue-500 text-white font-semibold px-4 py-2 rounded-full hover:bg-blue-600 transition-colors">← Volver al Dashboard</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 md:py-16">
+
+        <section id="intro" class="text-center mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-3">Clasificación Formal de la Investigación</h1>
+            <p class="max-w-3xl mx-auto text-slate-600 text-lg">
+                Una visión estructurada de la metodología que fundamenta el estudio sobre la predicción de patrones climáticos en Lima.
+            </p>
+        </section>
+        
+        <section class="mb-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <div class="method-card border-cyan-500">
+                    <h3 class="font-bold text-xl mb-3 text-cyan-700">1. Enfoque: Cuantitativo</h3>
+                    <p class="text-slate-600 mb-4">La investigación se centra en la recolección y análisis de datos numéricos para probar hipótesis y establecer relaciones entre variables mediante técnicas estadísticas y matemáticas.</p>
+                    <h4 class="font-semibold text-md mb-3 text-slate-800">Justificación en el Artículo:</h4>
+                    <ul class="space-y-3 text-sm text-slate-700">
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">✓</span><span><strong>Datos Numéricos:</strong> Se utiliza un conjunto de datos estrictamente numérico con registros horarios de variables meteorológicas (Temperatura, Humedad, etc.).</span></li>
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">✓</span><span><strong>Medición Objetiva:</strong> Se evalúa el rendimiento con métricas matemáticas precisas como RMSE y R² para predecir una variable medible.</span></li>
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">✓</span><span><strong>Análisis Estadístico:</strong> El análisis final se basa en una comparación cuantitativa y sistemática de los resultados de los modelos.</span></li>
+                    </ul>
+                </div>
+
+                <div class="method-card border-amber-500">
+                    <h3 class="font-bold text-xl mb-3 text-amber-700">2. Tipo y Diseño: Aplicada y Experimental</h3>
+                     <p class="text-slate-600 mb-4"><strong>Aplicada:</strong> Busca resolver un problema práctico y específico. <br><strong>Experimental:</strong> Compara "tratamientos" (algoritmos) bajo condiciones idénticas y controladas.</p>
+                    <h4 class="font-semibold text-md mb-3 text-slate-800">Justificación en el Artículo:</h4>
+                    <ul class="space-y-3 text-sm text-slate-700">
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">✓</span><span><strong>Resolución de Problemas:</strong> Aborda la necesidad de modelos predictivos precisos para mejorar la resiliencia climática urbana de Lima.</span></li>
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">✓</span><span><strong>Comparación de Grupos:</strong> Se definen cinco grupos de tratamiento claros: Regresión Lineal, SVR, Random Forest, Gradient Boosting y MLP.</span></li>
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">✓</span><span><strong>Condiciones Controladas:</strong> Todos los modelos utilizan el mismo dataset, preprocesamiento y métricas de evaluación, asegurando una comparación justa.</span></li>
+                    </ul>
+                </div>
+
+                <div class="method-card border-violet-500">
+                    <h3 class="font-bold text-xl mb-3 text-violet-700">3. Nivel: Explicativo y Comparativo</h3>
+                    <p class="text-slate-600 mb-4">El trabajo trasciende la simple descripción para explicar *por qué* un modelo es superior a otro, basándose en una comparación directa que busca encontrar relaciones de causa-efecto.</p>
+                    <h4 class="font-semibold text-md mb-3 text-slate-800">Justificación en el Artículo:</h4>
+                    <ul class="space-y-3 text-sm text-slate-700">
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">✓</span><span><strong>Búsqueda de Causas:</strong> El estudio no solo rankea, sino que determina qué modelo es la causa de un mejor rendimiento y analiza los motivos.</span></li>
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">✓</span><span><strong>Análisis Profundo:</strong> La sección de "Discusión" se dedica a explicar los modos de falla específicos de cada modelo (ej. sobreajuste, alto sesgo).</span></li>
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">✓</span><span><strong>Validación de Hipótesis:</strong> La comparación directa valida la hipótesis de que las arquitecturas no lineales son superiores para este problema.</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="resumen" class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-6 text-slate-800">Resumen de la Metodología</h2>
+             <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="py-3 px-4 bg-slate-100 font-bold uppercase text-sm text-slate-600 border-b border-slate-200">Característica Metodológica</th>
+                            <th class="py-3 px-4 bg-slate-100 font-bold uppercase text-sm text-slate-600 border-b border-slate-200">Clasificación</th>
+                            <th class="py-3 px-4 bg-slate-100 font-bold uppercase text-sm text-slate-600 border-b border-slate-200">Justificación Principal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-700">
+                        <tr>
+                            <td class="py-3 px-4 border-b border-slate-200 font-semibold">Enfoque</td>
+                            <td class="py-3 px-4 border-b border-slate-200">Cuantitativo</td>
+                            <td class="py-3 px-4 border-b border-slate-200">Se basa en la medición numérica de variables y el análisis estadístico para probar hipótesis.</td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="py-3 px-4 border-b border-slate-200 font-semibold">Tipo</td>
+                            <td class="py-3 px-4 border-b border-slate-200">Aplicada</td>
+                            <td class="py-3 px-4 border-b border-slate-200">Busca resolver un problema práctico: la predicción climática para mejorar la resiliencia urbana.</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 border-b border-slate-200 font-semibold">Diseño</td>
+                            <td class="py-3 px-4 border-b border-slate-200">Experimental</td>
+                            <td class="py-3 px-4 border-b border-slate-200">Compara sistemáticamente el efecto de cinco algoritmos (tratamientos) bajo condiciones controladas.</td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="py-3 px-4 border-b border-slate-200 font-semibold">Nivel / Alcance</td>
+                            <td class="py-3 px-4 border-b border-slate-200">Explicativo-Comparativo</td>
+                            <td class="py-3 px-4 border-b border-slate-200">Busca explicar cuál modelo es más eficaz y por qué, a través de una comparación directa de su rendimiento.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="text-center py-8 mt-8">
+        <p class="text-slate-500 text-sm">Esta es una representación visual de la metodología de investigación.</p>
+    </footer>
+
+</body>
+</html>
