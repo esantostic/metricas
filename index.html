@@ -1,1 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Comparativo de Modelos de Machine Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Cool Gray and Teal -->
+    <!-- Application Structure Plan: The SPA uses a dashboard layout. It starts with an introduction, followed by the main interactive section. This section features a central bar chart on the left and a dynamic details panel on the right. Users can switch chart metrics (MAE/MSE/RMSE/R²) and click on a model's bar to update the details panel. This encourages exploration and direct comparison. Below, two dedicated sections clearly explain model failures (Overfitting/Underfitting) and list the study's key contributions. This structure is more engaging than a linear presentation, allowing users to explore the data in the order that interests them most, thus enhancing usability. -->
+    <!-- Visualization & Content Choices: 1. Model Comparison -> Goal: Compare performance -> Viz: Interactive Bar Chart -> Interaction: Toggle metric (MAE/MSE/RMSE/R²), click bar to update details -> Justification: Bar chart is ideal for comparing categories; interactivity links quantitative data to qualitative analysis -> Library: Chart.js. 2. Model Details -> Goal: Explain model performance -> Viz: Dynamic Text Block -> Interaction: Updates on chart click -> Justification: Provides immediate, contextual information for the selected model -> Library: Vanilla JS. 3. Failure Modes -> Goal: Explain Over/Underfitting -> Viz: Thematic Info Cards with Icons -> Interaction: Simple hover states -> Justification: Simplifies complex concepts using visual separation and icons -> Library: HTML/Tailwind. 4. Contributions -> Goal: Summarize impact -> Viz: Numbered List -> Justification: Clear and concise presentation of key takeaways -> Library: HTML/Tailwind. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* cool-gray-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+        }
+        @media (min-width: 1024px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        .active-btn {
+            background-color: #0d9488; /* teal-600 */
+            color: white;
+        }
+        .inactive-btn {
+            background-color: #f1f5f9; /* cool-gray-100 */
+            color: #334155; /* cool-gray-700 */
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-teal-700">Análisis Comparativo de Modelos de Machine Learning</h1>
+            <p class="text-lg text-slate-600 mt-2">Para el Pronóstico de Temperatura a 12 horas en Lima</p>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main>
+            <!-- Introduction Section -->
+            <section id="objective" class="mb-12 bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-2xl font-bold text-teal-700 mb-3 flex items-center">
+                    <span class="text-3xl mr-3">🎯</span> Objetivo del Estudio
+                </h2>
+                <p class="text-slate-700 leading-relaxed">
+                    El propósito de este análisis es comparar cinco algoritmos de Machine Learning para determinar el modelo más preciso y robusto en el pronóstico de la temperatura a 12 horas, considerando el microclima particular de Lima. Este estudio busca establecer un punto de referencia (benchmark) de rendimiento que sirva de base para futuras investigaciones en el área.
+                </p>
+            </section>
+
+            <!-- Interactive Visualization Section -->
+            <section id="comparison" class="mb-12">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <!-- Chart Column -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm flex flex-col">
+                        <div class="flex-grow">
+                            <h3 class="text-xl font-bold text-slate-800 mb-4">Comparativa de Rendimiento</h3>
+                            <div class="mb-4 text-center">
+                                <p class="text-sm text-slate-500 mb-2">Seleccione una métrica para visualizar:</p>
+                                <div class="inline-flex flex-wrap justify-center rounded-md shadow-sm" role="group">
+                                    <button type="button" id="btn-mae" class="py-2 px-4 text-sm font-medium rounded-l-lg border border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-teal-500">MAE</button>
+                                    <button type="button" id="btn-mse" class="py-2 px-4 text-sm font-medium border-t border-b border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-teal-500">MSE</button>
+                                    <button type="button" id="btn-rmse" class="py-2 px-4 text-sm font-medium border-t border-b border-l border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-teal-500">RMSE (°C)</button>
+                                    <button type="button" id="btn-r2" class="py-2 px-4 text-sm font-medium rounded-r-md border border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-teal-500">R²</button>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="modelChart"></canvas>
+                            </div>
+                             <p class="text-xs text-center text-slate-400 mt-2">Haga clic en una barra para ver el análisis detallado.</p>
+                        </div>
+                    </div>
+
+                    <!-- Details Column -->
+                    <div id="details-panel" class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-bold text-slate-800 mb-3">Análisis del Modelo Seleccionado</h3>
+                        <div id="model-details-content" class="transition-opacity duration-500">
+                            <!-- Content will be injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Failure Analysis Section -->
+            <section id="failure-analysis" class="mb-12">
+                <h2 class="text-2xl font-bold text-teal-700 mb-6 text-center">Análisis de Fallos: ¿Por qué no todos los modelos funcionaron igual?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
+                        <h4 class="font-bold text-lg text-red-800 mb-2">Falla por Sobreajuste: Random Forest (RF)</h4>
+                        <p class="text-red-700">
+                            <strong class="font-semibold">Problema:</strong> Este modelo exhibió el rendimiento más bajo (RMSE: 1.3000) porque "memorizó" el ruido y los detalles específicos de los datos de entrenamiento en lugar de aprender los patrones generales subyacentes.
+                            <br><br>
+                            <strong class="font-semibold">Evidencia:</strong> Se observó una gran diferencia entre su error de entrenamiento (casi cero) y su error de validación (muy alto), lo que demuestra su pobre capacidad para generalizar a datos nuevos.
+                        </p>
+                    </div>
+                    <div class="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg">
+                         <h4 class="font-bold text-lg text-amber-800 mb-2">Limitado por Alto Sesgo: Regresión Lineal (Lasso)</h4>
+                        <p class="text-amber-700">
+                           <strong class="font-semibold">Problema:</strong> Con un RMSE de 1.2921, este modelo fue demasiado simple para un fenómeno tan complejo como el clima. Asume relaciones lineales que no existen en la realidad.
+                           <br><br>
+                           <strong class="font-semibold">Utilidad:</strong> A pesar de su bajo rendimiento, sirvió como una línea base fundamental. Demostró cuantitativamente que es indispensable utilizar arquitecturas de modelos más sofisticadas y no lineales para lograr una alta precisión.
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Contributions Section -->
+            <section id="contributions" class="bg-teal-600 text-white p-8 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4 flex items-center">
+                    <span class="text-3xl mr-3">💡</span> Contribuciones Clave del Estudio
+                </h2>
+                <ul class="space-y-3 list-inside">
+                    <li class="flex items-start">
+                        <span class="font-bold mr-3">1.</span>
+                        <span><strong class="font-semibold">Establece un Benchmark:</strong> Proporciona la primera comparativa directa y de alto rendimiento para el pronóstico de temperatura en el microclima específico de Lima.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="font-bold mr-3">2.</span>
+                        <span><strong class="font-semibold">Valida la Metodología:</strong> Demuestra empíricamente que los modelos no lineales, con el MLP a la cabeza, son superiores y necesarios para alcanzar una alta precisión en esta tarea.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="font-bold mr-3">3.</span>
+                        <span><strong class="font-semibold">Aporta Análisis Práctico:</strong> Ofrece una guía sobre los modos de falla característicos de cada arquetipo de modelo (sobreajuste vs. alto sesgo), sirviendo como referencia para futuras investigaciones sobre resiliencia climática en la región.</span>
+                    </li>
+                </ul>
+            </section>
+
+        </main>
+        
+        <!-- Footer -->
+        <footer class="text-center mt-12 py-4">
+            <p class="text-sm text-slate-500">Dashboard Interactivo generado a partir de un estudio comparativo.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const modelData = [
+            {
+                name: 'Perceptrón Multicapa (MLP)',
+                mae: 0.9087, mse: 1.4999, rmse: 1.2247, r2: 0.8762,
+                analysis: `<h4 class="font-bold text-lg text-green-700 mb-2">🏆 Modelo Ganador</h4><p class="text-slate-700">Demostró el rendimiento predictivo más alto, confirmando su robustez para modelar dinámicas atmosféricas complejas. Su ventaja se atribuye a su capacidad para aprender representaciones de datos no lineales y complejas a partir del extenso conjunto de características, logrando una solución superior a los otros modelos.</p>`
+            },
+            {
+                name: 'Support Vector Regressor (SVR)',
+                mae: 0.9279, mse: 1.5716, rmse: 1.2536, r2: 0.8702,
+                analysis: `<h4 class="font-bold text-lg text-sky-700 mb-2">🥈 Segundo Lugar</h4><p class="text-slate-700">Fue el competidor más cercano y el segundo modelo más preciso. Este resultado valida la alta efectividad de los modelos no lineales para esta tarea. Aunque muy preciso, su enfoque secuencial fue marginalmente superado por la estrategia de optimización global del MLP.</p>`
+            },
+            {
+                name: 'Gradient Boosting Regressor',
+                mae: 0.9503, mse: 1.6236, rmse: 1.2742, r2: 0.8659,
+                analysis: `<h4 class="font-bold text-lg text-indigo-700 mb-2">Rendimiento Sólido</h4><p class="text-slate-700">Este modelo de ensamble ofreció un rendimiento competitivo, superando a los modelos más simples. Su estrategia de corregir errores de forma secuencial lo convierte en una opción potente, aunque no alcanzó la precisión de los modelos MLP y SVR en este caso particular.</p>`
+            },
+            {
+                name: 'Random Forest Regressor',
+                mae: 0.9736, mse: 1.6899, rmse: 1.3000, r2: 0.8605,
+                analysis: `<h4 class="font-bold text-lg text-red-700 mb-2">Falla por Sobreajuste</h4><p class="text-slate-700">Exhibió el desempeño más bajo debido a un claro sobreajuste. Su flexibilidad, probablemente exacerbada por la alta dimensionalidad de los datos, provocó que el modelo memorizara el ruido del conjunto de entrenamiento en lugar de aprender los patrones subyacentes, resultando en una pobre capacidad de generalización.</p>`
+            },
+            {
+                name: 'Regresión Lineal (Lasso)',
+                mae: 0.9828, mse: 1.6694, rmse: 1.2921, r2: 0.8622,
+                analysis: `<h4 class="font-bold text-lg text-amber-700 mb-2">Limitado por Alto Sesgo</h4><p class="text-slate-700">Sirvió como una línea base fundamental. Su rendimiento, predeciblemente inferior, se explica por su inherente suposición de linealidad, una simplificación excesiva para la compleja dinámica de la temperatura. Su rol más importante fue justificar cuantitativamente la necesidad de utilizar arquitecturas no lineales más sofisticadas.</p>`
+            }
+        ];
+
+        const ctx = document.getElementById('modelChart').getContext('2d');
+        const detailsContent = document.getElementById('model-details-content');
+        const buttons = {
+            mae: document.getElementById('btn-mae'),
+            mse: document.getElementById('btn-mse'),
+            rmse: document.getElementById('btn-rmse'),
+            r2: document.getElementById('btn-r2')
+        };
+        let chart;
+        
+        const metricConfig = {
+            mae: { label: 'MAE - Menor es mejor', dataKey: 'mae', sort: (a, b) => a.mae - b.mae, backgroundColor: 'rgba(96, 165, 250, 0.6)', borderColor: 'rgba(96, 165, 250, 1)' },
+            mse: { label: 'MSE - Menor es mejor', dataKey: 'mse', sort: (a, b) => a.mse - b.mse, backgroundColor: 'rgba(239, 68, 68, 0.6)', borderColor: 'rgba(239, 68, 68, 1)' },
+            rmse: { label: 'RMSE (°C) - Menor es mejor', dataKey: 'rmse', sort: (a, b) => a.rmse - b.rmse, backgroundColor: 'rgba(13, 148, 136, 0.6)', borderColor: 'rgba(13, 148, 136, 1)' },
+            r2: { label: 'R² - Mayor es mejor', dataKey: 'r2', sort: (a, b) => b.r2 - a.r2, backgroundColor: 'rgba(249, 115, 22, 0.6)', borderColor: 'rgba(249, 115, 22, 1)' }
+        };
+
+        function updateDetails(model) {
+            detailsContent.style.opacity = 0;
+            setTimeout(() => {
+                detailsContent.innerHTML = `
+                    <h4 class="text-2xl font-bold mb-4">${model.name}</h4>
+                    <div class="grid grid-cols-2 gap-4 mb-4 text-center">
+                        <div class="bg-slate-100 p-3 rounded-md">
+                            <div class="text-sm text-slate-500">MAE</div>
+                            <div class="text-xl font-bold text-teal-700">${model.mae}</div>
+                        </div>
+                        <div class="bg-slate-100 p-3 rounded-md">
+                            <div class="text-sm text-slate-500">MSE</div>
+                            <div class="text-xl font-bold text-teal-700">${model.mse}</div>
+                        </div>
+                        <div class="bg-slate-100 p-3 rounded-md">
+                            <div class="text-sm text-slate-500">RMSE</div>
+                            <div class="text-xl font-bold text-teal-700">${model.rmse} °C</div>
+                        </div>
+                        <div class="bg-slate-100 p-3 rounded-md">
+                            <div class="text-sm text-slate-500">R²</div>
+                            <div class="text-xl font-bold text-teal-700">${model.r2}</div>
+                        </div>
+                    </div>
+                    <div>${model.analysis}</div>
+                `;
+                detailsContent.style.opacity = 1;
+            }, 300);
+        }
+
+        function renderChart(metric) {
+            const config = metricConfig[metric];
+            const sortedData = [...modelData].sort(config.sort);
+
+            const data = {
+                labels: sortedData.map(d => d.name.length > 25 ? d.name.match(/.{1,16}/g) : d.name),
+                datasets: [{
+                    label: config.label,
+                    data: sortedData.map(d => d[config.dataKey]),
+                    backgroundColor: config.backgroundColor,
+                    borderColor: config.borderColor,
+                    borderWidth: 1,
+                    barThickness: 'flex',
+                }]
+            };
+
+            const options = {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            title: function(context) {
+                                let title = context[0].label;
+                                return Array.isArray(title) ? title.join('') : title;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { beginAtZero: false, grid: { color: '#e2e8f0' } },
+                    y: { grid: { display: false } }
+                },
+                onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                        updateDetails(sortedData[elements[0].index]);
+                    }
+                }
+            };
+            
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, { type: 'bar', data, options });
+
+            Object.keys(buttons).forEach(key => {
+                buttons[key].classList.toggle('active-btn', key === metric);
+                buttons[key].classList.toggle('inactive-btn', key !== metric);
+            });
+        }
+
+        Object.keys(buttons).forEach(key => {
+            buttons[key].addEventListener('click', () => renderChart(key));
+        });
+
+        window.addEventListener('load', () => {
+            renderChart('rmse');
+            updateDetails(modelData.reduce((prev, current) => (prev.rmse < current.rmse) ? prev : current));
+        });
+
+    </script>
+</body>
+</html>
 
